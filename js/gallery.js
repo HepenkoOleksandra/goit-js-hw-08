@@ -64,36 +64,56 @@ const images = [
   },
 ];
 
-const galleryList = document.querySelector('.js-gallery');
+const galleryList = document.querySelector('.gallery');
 
 galleryList.addEventListener('click', onGalleryListClick);
 
-function onGalleryListClick(e) {
- e.preventDefault();
-  return console.log(e.target.dataset.source);
-}
-    
-console.log(galleryList);
-
 function galleryTemplate({preview, original, description}) {
-  return `<li class="gallery-item">
-  <a class="gallery-link" href="${original}">
-    <img
-      class="gallery-image"
-      src="${preview}"
-      data-source="${original}"
-      alt="${description}"
-    />
-  </a>
-</li>`
+  return `
+    <li class="gallery-item">
+      <a class="gallery-link" href="${original}">
+        <img
+          class="gallery-image"
+          src="${preview}"
+          data-source="${original}"
+          alt="${description}"
+        />
+      </a>
+    </li>`
 }
 
 const markup = images.map(galleryTemplate).join('\n');
 
 galleryList.insertAdjacentHTML("beforeend", markup);
 
+const instance = basicLightbox.create(
+  `<img class="modal-image" src="" alt="Modal image" />`, {
+  
+    onShow: (instance) => {
+      document.addEventListener('keydown', onEscPress)
+    },
+    
+    onClose: (instance) => {
+      document.removeEventListener('keydown', onEscPress)
+    }
+  }
+)
+  
+function onGalleryListClick(e) {
+  e.preventDefault();
 
+  if (e.target.nodeName !== 'IMG') {
+    return;
+  }
+ 
+  const modalImg = instance.element().querySelector('.modal-image');
+  modalImg.src = e.target.dataset.source;
+  modalImg.alt = e.target.alt;
+  instance.show()
+}
 
-
-
-
+function onEscPress(e) {
+  if (e.code === "Escape") {
+    instance.close()
+  }
+}
