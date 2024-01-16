@@ -69,7 +69,7 @@ const galleryList = document.querySelector('.js-gallery');
 galleryList.addEventListener('click', onGalleryListClick);
 
 function onGalleryListClick(e) {
- event.preventDefault();
+ e.preventDefault();
   return console.log(e.target.dataset.source);
 }
     
